@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vintage Auth 🗝️ (Lengkap)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Old+Standard+TT:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Palet Warna Vintage */
+        body {
+            background-color: #F7F3E8;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.1"><filter id="n" x="0" y="0"><feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100" height="100" filter="url(#n)"/></svg>');
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Old Standard TT', serif;
+            color: #5D4037;
+        }
+
+        .vintage-container {
+            background-color: #FFFFFF;
+            border: 10px solid #795548;
+            padding: 30px 40px;
+            box-shadow: 10px 10px 0px rgba(93, 64, 55, 0.3), 
+                        -5px -5px 15px rgba(255, 255, 255, 0.5) inset;
+            max-width: 420px; /* Lebar dilebarkan sedikit untuk mengakomodasi form lebih panjang */
+            width: 100%;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        /* Hidden radio inputs for tab switching */
+        .vintage-container input[type="radio"] {
+            display: none;
+        }
+
+        /* --- Tab Header Styling --- */
+        .tab-header {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 25px;
+            position: relative;
+            border-bottom: 2px solid #E0E0E0;
+        }
+
+        .tab-label {
+            cursor: pointer;
+            padding: 10px 20px;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #795548;
+            transition: color 0.3s;
+            z-index: 10;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .tab-indicator {
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            height: 2px;
+            width: 50%;
+            background-color: #5D4037;
+            transition: transform 0.4s ease-in-out;
+        }
+
+        #register-tab:checked ~ .tab-header .tab-indicator {
+            transform: translateX(100%);
+        }
+
+        #login-tab:checked ~ .tab-header .tab-label[for="login-tab"],
+        #register-tab:checked ~ .tab-header .tab-label[for="register-tab"] {
+            color: #5D4037;
+        }
+
+        /* --- Form Transition Styling --- */
+        .form-content {
+            position: relative;
+            overflow: hidden;
+            /* Tinggi diperpanjang untuk mengakomodasi form registrasi yang lebih panjang */
+            height: 480px; 
+        }
+
+        .vintage-form {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            padding: 0;
+            opacity: 0;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .login-form {
+            transform: translateX(0);
+            opacity: 1; 
+            height: 300px; /* Tinggi form login standar */
+        }
+
+        .register-form {
+            transform: translateX(100%);
+            height: auto; /* Biarkan tingginya menyesuaikan konten baru */
+        }
+
+        #register-tab:checked ~ .form-content .login-form {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+
+        #register-tab:checked ~ .form-content .register-form {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        /* Judul Formulir */
+        .vintage-form h2 {
+            font-family: 'Playfair Display', serif;
+            text-align: center;
+            color: #795548;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        /* Grup Input Standar */
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.95em;
+            font-weight: bold;
+        }
+
+        /* Input Fields (Text, Email, Password, Date) */
+        .input-group input:not([type="radio"]) {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #795548;
+            background-color: #FFF;
+            font-size: 1em;
+            color: #5D4037;
+            box-sizing: border-box;
+            font-family: 'Old Standard TT', serif;
+            transition: border-color 0.3s;
+        }
+        
+        /* Penyesuaian untuk input date agar terlihat vintage */
+        .input-group input[type="date"] {
+             /* Mengatasi styling bawaan browser */
+            -webkit-appearance: none; 
+            appearance: none;
+            padding-right: 10px; 
+        }
+
+        .input-group input:focus {
+            border-color: #A1887F;
+            outline: none;
+            box-shadow: 0 0 5px rgba(161, 136, 127, 0.5);
+        }
+
+        /* Styling untuk Jenis Kelamin (Radio Buttons) */
+        .gender-options {
+            display: flex;
+            gap: 20px;
+            margin-top: 5px;
+        }
+        
+        .gender-options label {
+            display: inline-flex;
+            align-items: center;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .gender-options input[type="radio"] + span {
+            /* Styling kustom untuk radio button agar lebih vintage/sederhana */
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            margin-right: 5px;
+            border: 2px solid #795548;
+            border-radius: 50%;
+            position: relative;
+            top: 2px;
+        }
+
+        .gender-options input[type="radio"]:checked + span::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #5D4037;
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            border-radius: 50%;
+        }
+
+        /* Tombol Vintage */
+        .vintage-button {
+            width: 100%;
+            padding: 12px;
+            background-color: #A1887F;
+            color: white;
+            border: 1px solid #795548;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            margin-top: 15px;
+            transition: background-color 0.3s, transform 0.1s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .vintage-button:hover {
+            background-color: #795548;
+        }
+
+        .vintage-button:active {
+            transform: translateY(1px);
+        }
+
+        /* Footer Teks */
+        .form-footer {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.85em;
+            color: #795548;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="vintage-container">
+        <input type="radio" name="tab" id="login-tab" checked>
+        <input type="radio" name="tab" id="register-tab">
+
+        <div class="tab-header">
+            <label for="login-tab" class="tab-label">Masuk</label>
+            <label for="register-tab" class="tab-label">Daftar</label>
+            <div class="tab-indicator"></div>
+        </div>
+
+        <div class="form-content">
+            <form class="vintage-form login-form">
+                <h2>Selamat Datang Kembali</h2>
+                <div class="input-group">
+                    <label for="login-user">Nama Pengguna</label>
+                    <input type="text" id="login-user" required>
+                </div>
+                <div class="input-group">
+                    <label for="login-pass">Kata Sandi</label>
+                    <input type="password" id="login-pass" required>
+                </div>
+                <button type="submit" class="vintage-button">Masuk</button>
+                <p class="form-footer">Lupa kata sandi?</p>
+            </form>
+
+            <form class="vintage-form register-form">
+                <h2>Buat Akun Baru</h2>
+                
+                <div class="input-group">
+                    <label for="reg-user">Nama Pengguna</label>
+                    <input type="text" id="reg-user" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="reg-email">Email</label>
+                    <input type="email" id="reg-email" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="reg-dob">Tanggal Lahir</label>
+                    <input type="date" id="reg-dob" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Jenis Kelamin</label>
+                    <div class="gender-options">
+                        <label>
+                            <input type="radio" name="gender" value="pria" required>
+                            <span></span> Pria
+                        </label>
+                        <label>
+                            <input type="radio" name="gender" value="wanita">
+                            <span></span> Wanita
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="reg-pass">Kata Sandi</label>
+                    <input type="password" id="reg-pass" required>
+                </div>
+
+                <button type="submit" class="vintage-button">Daftar Sekarang</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
